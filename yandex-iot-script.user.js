@@ -20,7 +20,7 @@
         dark: { primary: '#a788ff', accent: '#ffd700', text: '#d3d3d3', buttonTextActive: '#333333', headingText: '#ffffff' }
     };
 
-    let COLORS = THEMES[getTheme()]; 
+    let COLORS = THEMES[getTheme()]; // Теперь getTheme доступна
 
     const STYLES = {
         container: { padding: '10px', backgroundColor: 'transparent', borderRadius: '10px', marginTop: '10px', marginBottom: '10px' },
@@ -355,8 +355,27 @@
             const body = JSON.stringify({
                 name: scenario.name || 'Imported Scenario',
                 icon: scenario.icon || 'home',
-                triggers: scenario.triggers?.map(t => ({ trigger: { type: t.trigger?.type || 'scenario.trigger.timetable', value: t.trigger?.value || '12:00', slotId: t.trigger?.type || 'scenario.trigger.timetable' }, filters: [] })) || [{ trigger: { type: 'scenario.trigger.voice', value: 'Тест', slotId: 'scenario.trigger.voice' }, filters: [] }],
-                steps: scenario.steps?.map(s => ({ type: s.type || 'scenarios.steps.actions.v2', parameters: { items: s.parameters?.items?.map(item => ({ id: item.id, type: item.type || 'step.action.item.device', value: { id: item.id, name: scenario.devices?.[0] || 'Устройство', type: 'devices.types.light', capabilities: [{ type: 'devices.capabilities.on_off', state: { instance: 'on', value: true, relative: false } }], directives: [], device_ids: [] } })) || [] } })) || [{ type: 'scenarios.steps.actions.v2', parameters: { items: [{ id: '3c9da082-24ae-4b08-8e3e-d6e1c002ded5', type: 'step.action.item.device', value: { id: '3c9da082-24ae-4b08-8e3e-d6e1c002ded5', name: 'Диммер розетковый', type: 'devices.types.light', capabilities: [{ type: 'devices.capabilities.on_off', state: { instance: 'on', value: true, relative: false } }], directives: [], device_ids: [] } }] } }],
+                triggers: scenario.triggers?.map(t => ({
+                    trigger: { type: t.trigger?.type || 'scenario.trigger.timetable', value: t.trigger?.value || '12:00', slotId: t.trigger?.type || 'scenario.trigger.timetable' },
+                    filters: []
+                })) || [{ trigger: { type: 'scenario.trigger.voice', value: 'Тест', slotId: 'scenario.trigger.voice' }, filters: [] }],
+                steps: scenario.steps?.map(s => ({
+                    type: s.type || 'scenarios.steps.actions.v2',
+                    parameters: {
+                        items: s.parameters?.items?.map(item => ({
+                            id: item.id,
+                            type: item.type || 'step.action.item.device',
+                            value: {
+                                id: item.id,
+                                name: item.name || 'Unnamed Device',
+                                type: item.type || 'devices.types.light',
+                                capabilities: [{ type: 'devices.capabilities.on_off', state: { instance: 'on', value: true, relative: false } }],
+                                directives: [],
+                                device_ids: []
+                            }
+                        })) || []
+                    }
+                })) || [{ type: 'scenarios.steps.actions.v2', parameters: { items: [] } }],
                 settings: { continue_execution_after_error: false }
             });
             const response = await fetch('https://iot.quasar.yandex.ru/m/v4/user/scenarios/', {
